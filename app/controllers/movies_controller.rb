@@ -1,5 +1,10 @@
 class MoviesController < ApplicationController
 
+  def self.ratings
+    # pluck returns an array of whatever column is passed to it
+    # setting up the class method like this didn't work for me :(
+  end
+
   def movie_params
     params.require(:movie).permit(:title, :rating, :description, :release_date)
   end
@@ -13,14 +18,20 @@ class MoviesController < ApplicationController
   def index
     @query = params[:query]
     
+    @all_ratings = Movie.uniq.pluck(:rating).sort
     
+    if params[:ratings].present?
+      @hash_rating = params[:ratings].keys
+    else
+      @hash_rating = @all_ratings
+    end
     
     if @query == "sort_title" then
-      @movies = Movie.all.order(:title)
+      @movies = Movie.where(:rating => @hash_rating).order(:title)
     elsif @query == "sort_release_date"
-      @movies = Movie.all.order(:release_date)
+      @movies = Movie.where(:rating => @hash_rating).order(:release_date)
     else
-      @movies = Movie.all
+      @movies = Movie.where(:rating => @hash_rating)
     end
     
   end

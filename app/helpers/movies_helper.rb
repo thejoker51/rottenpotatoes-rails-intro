@@ -11,4 +11,13 @@ module MoviesHelper
       return nil
     end
   end
+  
+  def rating_check_mark(rating)
+    
+    if @hash_rating.include? rating
+      return true
+    else
+      return false
+    end
+  end
 end
