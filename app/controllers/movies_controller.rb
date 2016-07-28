@@ -16,16 +16,49 @@ class MoviesController < ApplicationController
   end
 
   def index
-    @query = params[:query]
+    
+    #session.delete(:ratings)
+    #session.delete(:query)
+    
+    #params[:query].nil? ? @query = session[:query] : @query = nil
+    #params[:ratings].nil? ? @hash_rating = session[:ratings].keys : @hash_rating = nil
     
     @all_ratings = Movie.uniq.pluck(:rating).sort
     
-    if params[:ratings].present?
+    
+    
+    
+    
+    if params[:query].present? then
+      session.delete(:query)
+      @query = params[:query]
+      session[:query] = @query
+    end
+    
+    if params[:ratings].present? then
+      session.delete(:ratings)
       @hash_rating = params[:ratings].keys
+      session[:ratings] = params[:ratings]
+      
     else
       @hash_rating = @all_ratings
     end
     
+    puts session[:query]
+    puts session[:ratings] 
+    puts params[:ratings]
+    
+    if session[:query] != params[:query] && session[:ratings] != params[:ratings] then
+      redirect_to query: session[:query], ratings: session[:ratings]
+    elsif session[:query] != params[:query] && session[:ratings] == params[:ratings] then
+      redirect_to ratings: session[:ratings]
+    elsif session[:query] == params[:query] && session[:ratings] != params[:ratings] then
+      redirect_to query: session[:query]
+    end
+    
+  
+  
+  
     if @query == "sort_title" then
       @movies = Movie.where(:rating => @hash_rating).order(:title)
     elsif @query == "sort_release_date"
@@ -63,5 +96,11 @@ class MoviesController < ApplicationController
     flash[:notice] = "Movie '#{@movie.title}' deleted."
     redirect_to movies_path
   end
-
+  
+  def session_kill
+    
+    
+  
+  end
+  
 end

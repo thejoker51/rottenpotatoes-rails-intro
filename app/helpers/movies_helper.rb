@@ -12,8 +12,8 @@ module MoviesHelper
     end
   end
   
-  def rating_check_mark(rating)
-    
+  def rating_check_mark(rating)  
+    # puts @hash_rating
     if @hash_rating.include? rating
       return true
     else
